@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKtreading - Official Platform</title>
+    <style>
+        :root { --red: #cc0000; --dark: #1a1a1a; --white: #ffffff; --green: #28a745; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f4f4f4; color: #333; padding-bottom: 60px; }
+        
+        /* Utility Classes */
+        .hidden { display: none; }
+        .card { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; text-align: center; display: block; text-decoration: none; }
+        .btn-red { background: var(--red); color: white; }
+        .btn-green { background: var(--green); color: white; }
+        
+        /* Header */
+        header { background: var(--red); color: white; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        /* Auth Section */
+        #auth-section { max-width: 400px; margin: 40px auto; padding: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--red); }
+
+        /* Dashboard */
+        .container { max-width: 800px; margin: auto; padding: 15px; }
+        .balance-box { background: var(--dark); color: white; text-align: center; padding: 30px; border-radius: 15px; margin-bottom: 20px; }
+        .balance-box h1 { color: #ffcc00; font-size: 35px; margin: 10px 0; }
+
+        /* Plans Grid */
+        .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .plan-card { background: white; border: 1px solid #eee; padding: 15px; border-radius: 10px; text-align: center; border-bottom: 3px solid var(--red); }
+        .plan-card b { color: var(--red); font-size: 18px; }
+
+        /* Admin Table */
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 10px; font-size: 12px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #f8f8f8; color: var(--red); }
+
+        /* Floating WhatsApp */
+        .wa-float { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; padding: 15px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; }
+    </style>
+</head>
+<body>
+
+<header>PKtreading</header>
+
+<div id="auth-section">
+    <div class="card">
+        <h2 style="text-align: center; margin-top: 0;">Login / Register</h2>
+        <input type="text" id="user-phone" placeholder="Phone Number (03xxxxxxxxx)">
+        <input type="password" id="user-pass" placeholder="Password">
+        <input type="text" id="user-ref" placeholder="Referral Code (Optional)">
+        <button class="btn btn-red" onclick="showDashboard()">Login to Account</button>
+        
+        <p style="text-align: center; font-size: 13px; color: #666; margin-top: 20px;">
+            Are you the Admin? <br>
+            <span style="color: var(--red); cursor: pointer; font-weight: bold;" onclick="openAdmin()">Click here for Admin Panel</span>
+        </p>
+    </div>
+</div>
+
+<div id="user-dashboard" class="hidden">
+    <div class="container">
+        <div class="balance-box">
+            <span>Current Balance</span>
+            <h1 id="user-balance">PKR 0.00</h1>
+            <div style="display: flex; justify-content: space-around; font-size: 14px; opacity: 0.8;">
+                <div>Daily: <b>PKR 0</b></div>
+                <div>Referral: <b>PKR 0</b></div>
+            </div>
+        </div>
+
+        <div class="card" style="border: 1px dashed var(--green); text-align: center;">
+            <h4 style="margin: 0;">Referral Bonus: 10%</h4>
+            <p style="font-size: 12px; color: #666;">Invite friends and earn when they invest.</p>
+            <button class="btn btn-green" onclick="alert('Referral Link Copied!')">🔗 Copy My Referral Link</button>
+        </div>
+
+        <div class="card">
+            <h3>Investment Plans</h3>
+            <div class="plan-grid" id="plans-container">
+                </div>
+        </div>
+
+        <div id="payment-form" class="card hidden" style="border: 2px solid var(--red);">
+            <h3 id="selected-plan-title">Send Payment</h3>
+            <p style="font-size: 14px;">Send exact amount to:</p>
+            <div style="background: #fff3f3; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                <p><b>JazzCash:</b> <span id="disp-jazz">03012472206 (Manghir)</span></p>
+                <p><b>EasyPaisa:</b> <span id="disp-easy">03425450883 (Razzaqe)</span></p>
+            </div>
+            <input type="text" id="tid-input" placeholder="Enter TID Number">
+            <label style="font-size: 12px;">Upload Screenshot:</label>
+            <input type="file" accept="image/*">
+            <button class="btn btn-red" onclick="submitProof()">Submit Proof for Approval</button>
+        </div>
+
+        <div class="card">
+            <h3>Withdraw Profit</h3>
+            <button class="btn" style="background: #333; color: white;" onclick="withdrawRequest()">Withdraw Now (Daily Payout)</button>
+            <p style="font-size: 11px; color: gray; text-align: center; margin-top: 10px;">Next withdrawal available after 24 hours.</p>
+        </div>
+    </div>
+</div>
+
+<div id="admin-panel" class="hidden">
+    <div class="container">
+        <h2 style="color: var(--red);">Waqar's Admin Control</h2>
+        
+        <div class="card">
+            <h3>Change Payment Numbers</h3>
+            <input type="text" id="new-jazz" placeholder="New JazzCash (No - Name)">
+            <input type="text" id="new-easy" placeholder="New EasyPaisa (No - Name)">
+            <button class="btn btn-red" onclick="updateNumbers()">Update Numbers Globally</button>
+        </div>
+
+        <div class="card">
+            <h3>Plan Activation Requests</h3>
+            <table id="plan-table">
+                <tr><th>User</th><th>Plan</th><th>TID</th><th>Action</th></tr>
+                <tr><td>0301234567</td><td>1,000</td><td>TRX88291</td><td><button class="btn-green" onclick="this.parentElement.innerText='Active ✅'">Approve</button></td></tr>
+            </table>
+        </div>
+
+        <div class="card" style="border-left: 5px solid gold;">
+            <h3>Withdrawal Requests</h3>
+            <table id="withdraw-table">
+                <tr><th>User</th><th>Method</th><th>Amount</th><th>Action</th></tr>
+                <tr><td>0344112233</td><td>JazzCash</td><td>400</td><td><button class="btn-green" onclick="this.parentElement.innerText='Paid ✅'">Mark Paid</button></td></tr>
+            </table>
+        </div>
+
+        <button class="btn" style="background: #555; color: white;" onclick="location.reload()">Logout Admin</button>
+    </div>
+</div>
+
+<a href="https://wa.me/923012472206" class="wa-float">WhatsApp Help</a>
+
+<script>
+    // 1. Generate 10 Plans
+    const plansContainer = document.getElementById('plans-container');
+    const prices = [1000, 2000, 5000, 10000, 15000, 20000, 30000, 50000, 75000, 100000];
+    
+    prices.forEach((p, i) => {
+        let div = document.createElement('div');
+        div.className = 'plan-card';
+        div.innerHTML = `
+            <b>PKR ${p}</b><br>
+            <small>Daily: ${p*0.2}</small><br>
+            <button class="btn btn-red" style="padding: 5px; margin-top: 8px; font-size: 11px;" onclick="openPay('${p}')">Invest</button>
+        `;
+        plansContainer.appendChild(div);
+    });
+
+    // 2. Navigation Functions
+    function showDashboard() {
+        document.getElementById('auth-section').classList.add('hidden');
+        document.getElementById('user-dashboard').classList.remove('hidden');
+    }
+
+    function openAdmin() {
+        let code = prompt("Enter Admin Secret Code:");
+        if(code === "Waqar786") {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('user-dashboard').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+        } else {
+            alert("Wrong Code! Access Denied.");
+        }
+    }
+
+    function openPay(amt) {
+        document.getElementById('payment-form').classList.remove('hidden');
+        document.getElementById('selected-plan-title').innerText = "Pay for Plan: PKR " + amt;
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function submitProof() {
+        let tid = document.getElementById('tid-input').value;
+        if(tid === "") { alert("Please enter TID number!"); return; }
+        alert("Proof Submitted! Waqar will approve your plan after verification.");
+        document.getElementById('payment-form').classList.add('hidden');
+    }
+
+    function withdrawRequest() {
+        alert("Withdrawal request sent! Admin will process it within 24 hours.");
+    }
+
+    // 3. Admin Functions
+    function updateNumbers() {
+        let nj = document.getElementById('new-jazz').value;
+        let ne = document.getElementById('new-easy').value;
+        if(nj) document.getElementById('disp-jazz').innerText = nj;
+        if(ne) document.getElementById('disp-easy').innerText = ne;
+        alert("Payment Numbers Updated Successfully!");
+    }
+</script>
+
+</body>
+</html>
